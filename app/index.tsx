@@ -1,5 +1,5 @@
-import LoginPage from "@/components/pages/login";
+import ReportPage from "@/components/pages/report";
 
 export default function Index() {
-  return <LoginPage />;
+  return <ReportPage />;
 }

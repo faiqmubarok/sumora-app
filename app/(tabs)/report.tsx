@@ -1,12 +1,7 @@
-import React from "react";
-import { Text, View } from "react-native";
+import ReportPage from "@/components/pages/report";
 
 const Report = () => {
-  return (
-    <View>
-      <Text>Report</Text>
-    </View>
-  );
+  return <ReportPage />;
 };
 
 export default Report;
