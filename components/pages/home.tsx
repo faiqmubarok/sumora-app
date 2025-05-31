@@ -230,8 +230,8 @@ const CardOverview = ({
 
 export default function HomePage() {
   return (
-    <>
-      <StatusBar style="light" />
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar style="light" translucent />
       <ImageBackground
         source={require("@/assets/images/banner-homepage.png")}
         imageStyle={{ flex: 1 }}
@@ -476,6 +476,6 @@ export default function HomePage() {
           </View>
         </ScrollView>
       </ImageBackground>
-    </>
+    </View>
   );
 }

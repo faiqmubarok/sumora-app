@@ -1,12 +1,7 @@
-import React from "react";
-import { Text, View } from "react-native";
+import DetailArticlePage from "@/components/pages/detail-article";
 
 const DetailArticle = () => {
-  return (
-    <View>
-      <Text>DetailArticle</Text>
-    </View>
-  );
+  return <DetailArticlePage />;
 };
 
 export default DetailArticle;
