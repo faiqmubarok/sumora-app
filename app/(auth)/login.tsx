@@ -1,5 +1,7 @@
 import LoginPage from "@/components/pages/login";
 
-export default function Index() {
+const Login = () => {
   return <LoginPage />;
-}
+};
+
+export default Login;
