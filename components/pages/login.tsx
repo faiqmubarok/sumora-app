@@ -1,3 +1,4 @@
+import { useToast } from "@/components/toast";
 import Colors from "@/constants/color";
 import { usePostLogin } from "@/features/auth/api/use-post-login";
 import LoginForm from "@/features/auth/components/login-form";
@@ -16,6 +17,7 @@ import {
 import Link from "../link";
 
 export default function LoginPage() {
+  const { show } = useToast();
   const router = useRouter();
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
@@ -33,6 +35,11 @@ export default function LoginPage() {
 
   const onSubmit = (data: LoginFormSchema) => {
     console.log("Form submitted:", data);
+    show({
+      title: "Success!",
+      description: "Login successful",
+      variant: "success",
+    });
     router.push("/home");
     // login(data);
   };

@@ -1,5 +1,6 @@
 import pdfIcon from "@/assets/icons/FilePdf.png";
 import Colors from "@/constants/color";
+import { useDeviceStore } from "@/store/device-store";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -15,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../button";
 import Card from "../card";
 import OrderedList from "../ordered-list";
+import NotConnected from "./not-connected";
 
 const data = {
   labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -48,6 +50,8 @@ const chartConfig = {
 const screenWidth = Dimensions.get("window").width;
 
 const ReportPage = () => {
+  const { isConnected } = useDeviceStore();
+
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleExportFile = async () => {
@@ -80,6 +84,8 @@ const ReportPage = () => {
     }
   };
 
+  if (!isConnected) return <NotConnected />;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar style="dark" translucent />
@@ -111,6 +117,8 @@ const ReportPage = () => {
             >
               <Button
                 variant="outline"
+                isLoading={isDownloading}
+                disabled={isDownloading}
                 style={{ borderColor: "#E2E2E2" }}
                 iconSource={pdfIcon}
                 withIcon

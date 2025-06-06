@@ -7,7 +7,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BlurView } from "expo-blur";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
@@ -247,7 +247,7 @@ export default function HomePage() {
               paddingHorizontal: 16,
             }}
           >
-            <View
+            <TouchableOpacity activeOpacity={0.6} onPress={() => router.push("/profile")}
               style={{ flexDirection: "row", gap: 12, alignItems: "center" }}
             >
               <Image
@@ -275,7 +275,7 @@ export default function HomePage() {
                   Kim Chaewon
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
             <BlurView
               // experimentalBlurMethod="dimezisBlurView"
               intensity={15}

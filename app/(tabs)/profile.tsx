@@ -1,12 +1,8 @@
+import ProfilePage from "@/components/pages/profile";
 import React from "react";
-import { Text, View } from "react-native";
 
 const Profile = () => {
-  return (
-    <View>
-      <Text>Profile</Text>
-    </View>
-  );
+  return <ProfilePage />;
 };
 
 export default Profile;

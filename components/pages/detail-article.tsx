@@ -24,7 +24,7 @@ const tags = [
   { id: 3, name: "Smart Living" },
 ];
 
-export default function DetailArticlePage() {
+const DetailArticlePage = () => {
   const navigation = useNavigation();
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -200,7 +200,7 @@ export default function DetailArticlePage() {
       </View>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   statusBarBackground: {
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    backgroundColor: "blue",
+    backgroundColor: "white",
   },
   articleImage: {
     width: "100%",
@@ -342,3 +342,5 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
+
+export default DetailArticlePage;
