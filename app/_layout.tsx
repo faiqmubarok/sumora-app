@@ -2,7 +2,7 @@ import Colors from "@/constants/color";
 import { TanstackProvider } from "@/providers/tanstack-provider";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+// import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
@@ -49,7 +49,7 @@ export default function RootLayout() {
   return (
     <TanstackProvider>
       <Stack screenOptions={{ headerShown: false }} />
-      <StatusBar style="light" />
+      {/* <StatusBar style="light" /> */}
     </TanstackProvider>
   );
 }
