@@ -1,3 +1,4 @@
+import Colors from "@/constants/color";
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -65,7 +66,7 @@ export const DialogProvider = ({ children }: { children: React.ReactNode }) => {
                 textStyle={{
                   fontSize: 14,
                   fontFamily: "DMSans-Regular",
-                  color: "#374151",
+                  color: Colors.TEXT,
                 }}
               >
                 {options?.cancelText || "Cancel"}
@@ -109,24 +110,25 @@ const styles = StyleSheet.create({
   },
 
   dialog: {
-    backgroundColor: "white",
+    backgroundColor: Colors.WHITE,
     borderRadius: 16,
     width: "100%",
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: Colors.SHADOW,
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
   },
   title: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "DMSans-SemiBold",
     marginBottom: 8,
     color: "#111827",
   },
   description: {
     fontSize: 14,
-    color: "#4b5563",
+    fontFamily: "DMSans-Regular",
+    color: Colors.TEXT,
     marginBottom: 20,
   },
   actions: {

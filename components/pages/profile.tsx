@@ -12,11 +12,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
   StyleProp,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -73,33 +74,130 @@ const ContainerSection = ({
   title: string;
   style?: StyleProp<ViewStyle>;
   children: React.ReactNode;
-}) => {
-  return (
-    <View style={style}>
-      <Text
-        style={{
-          fontFamily: "DMSans-Regular",
-          fontSize: 14,
+}) => (
+  <View style={style}>
+    <Text
+      style={[
+        styles.text,
+        {
           marginBottom: 12,
-          color: "black",
-        }}
-      >
-        {title}
-      </Text>
-      <View
-        style={{
-          borderRadius: 16,
-          backgroundColor: "#F3F3F3",
-          padding: 12,
-          borderWidth: 1,
-          borderColor: "#DBDBDB",
-        }}
-      >
-        {children}
-      </View>
+          color: Colors.BLACK,
+        },
+      ]}
+    >
+      {title}
+    </Text>
+    <View
+      style={{
+        borderRadius: 16,
+        backgroundColor: "#F3F3F3",
+        padding: 12,
+        borderWidth: 1,
+        borderColor: Colors.BORDER,
+      }}
+    >
+      {children}
     </View>
-  );
-};
+  </View>
+);
+
+const ProfileItem = ({
+  label,
+  value,
+  icon,
+  isLast,
+  isConnected,
+  onConnect,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+  isLast: boolean;
+  isConnected: boolean;
+  onConnect: () => void;
+}) => (
+  <View>
+    <View style={styles.containerItem}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <View style={styles.containerIcon}>{icon}</View>
+        <View
+          style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}
+        >
+          <Text
+            style={[
+              styles.text,
+              { fontFamily: "DMSans-SemiBold", fontSize: 12 },
+            ]}
+          >
+            {label}
+          </Text>
+          <Text style={styles.text}>
+            {isLast ? (isConnected ? value : "Not Connected") : value}
+          </Text>
+        </View>
+      </View>
+      {isLast && !isConnected && (
+        <Button
+          onPress={onConnect}
+          variant="primary"
+          size="small"
+          textStyle={{ fontSize: 12 }}
+        >
+          Connect
+        </Button>
+      )}
+    </View>
+    {!isLast && <View style={styles.separator} />}
+  </View>
+);
+
+const SettingItem = ({
+  item,
+  isLast,
+  isEnabled,
+  onToggle,
+  onLogout,
+}: {
+  item: ProfileNavigation;
+  isLast: boolean;
+  isEnabled: boolean;
+  onToggle: (v: boolean) => void;
+  onLogout: () => void;
+}) => (
+  <TouchableOpacity onPress={() => isLast && onLogout()} activeOpacity={0.4}>
+    <View style={styles.containerItem}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <View
+          style={[
+            styles.containerIcon,
+            {
+              backgroundColor: isLast ? "rgba(229, 26, 26, 0.1)" : "#fff",
+              elevation: 1,
+            },
+          ]}
+        >
+          {item.icon}
+        </View>
+        <Text
+          style={[
+            styles.text,
+            {
+              color: isLast ? Colors.DESTRUCTIVE : "#111827",
+            },
+          ]}
+        >
+          {item.name}
+        </Text>
+      </View>
+      {item.type === Type.Toggle ? (
+        <CustomSwitch value={isEnabled} onValueChange={onToggle} />
+      ) : item.type === Type.Arrow ? (
+        <AntDesign name="arrowright" size={24} color={Colors.TEXT} />
+      ) : null}
+    </View>
+    {!isLast && <View style={styles.separator} />}
+  </TouchableOpacity>
+);
 
 const ProfilePage = () => {
   const { show } = useDialog();
@@ -107,28 +205,31 @@ const ProfilePage = () => {
   const router = useRouter();
   const { isConnected } = useDeviceStore();
   const [isEnabled, setIsEnabled] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<
+    "granted" | "denied" | "undetermined"
+  >("undetermined");
 
-  const handleToggleNotification = async (newValue: boolean) => {
-    if (newValue) {
-      // Cek status izin notifikasi
-      let currentStatus = (await Notifications.getPermissionsAsync()).status;
+  useEffect(() => {
+    Notifications.getPermissionsAsync().then(({ status }) => {
+      setPermissionStatus(status);
+      setIsEnabled(status === "granted");
+    });
+  }, []);
 
-      if (currentStatus !== "granted") {
-        const { status: requestStatus } =
-          await Notifications.requestPermissionsAsync();
-        currentStatus = requestStatus;
+  const handleToggleNotification = async (val: boolean) => {
+    if (val) {
+      if (permissionStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        setPermissionStatus(status);
+        if (status !== "granted") {
+          Alert.alert(
+            "Izin Diperlukan",
+            "Aplikasi membutuhkan izin notifikasi untuk mengaktifkan fitur ini."
+          );
+          setIsEnabled(false);
+          return;
+        }
       }
-
-      if (currentStatus !== "granted") {
-        Alert.alert(
-          "Izin Diperlukan",
-          "Aplikasi membutuhkan izin notifikasi untuk mengaktifkan fitur ini."
-        );
-        setIsEnabled(false);
-        return;
-      }
-
-      // Kalau bukan di Expo Go, schedule local notification sebagai konfirmasi
       if (!Constants.isDevice || Constants.appOwnership !== "expo") {
         await Notifications.scheduleNotificationAsync({
           content: {
@@ -137,11 +238,7 @@ const ProfilePage = () => {
           },
           trigger: null,
         });
-      } else {
-        // Kalau di Expo Go, skip schedule notif dan cuma log
-        console.log("Running in Expo Go, skip scheduling notification");
       }
-
       setIsEnabled(true);
     } else {
       setIsEnabled(false);
@@ -166,7 +263,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
       <ScrollView
         contentContainerStyle={{
           paddingTop: 20,
@@ -174,9 +271,7 @@ const ProfilePage = () => {
           alignItems: "center",
         }}
       >
-        {/* Kontainer utama */}
         <View style={{ width: "100%", maxWidth: 480, marginBottom: 64 }}>
-          {/* Avatar + Nama + Email + Button */}
           <View style={{ alignItems: "center" }}>
             <Avatar uri={photoProfile} size={72} fallbackText="KC" />
             <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -184,22 +279,12 @@ const ProfilePage = () => {
                 style={{
                   fontFamily: "DMSans-Bold",
                   fontSize: 20,
-                  textAlign: "center",
                   color: "#0C0B0B",
                 }}
               >
                 Kim Chaewon
               </Text>
-              <Text
-                style={{
-                  fontFamily: "DMSans-Regular",
-                  fontSize: 14,
-                  textAlign: "center",
-                  color: "#0C0B0B",
-                }}
-              >
-                KimChaewon@gmail.com
-              </Text>
+              <Text style={styles.text}>KimChaewon@gmail.com</Text>
               <Button
                 variant="outline"
                 style={{
@@ -207,194 +292,68 @@ const ProfilePage = () => {
                   backgroundColor: "black",
                   borderRadius: 8,
                 }}
-                textStyle={{
-                  color: "white",
-                }}
+                textStyle={{ color: "white" }}
               >
                 Edit Profile
               </Button>
             </View>
           </View>
 
-          {/* Section: User Profile */}
           <ContainerSection title="User Profile" style={{ marginTop: 24 }}>
-            {profile.map((item, index, array) => {
-              const isLastItem = index === array.length - 1;
-              return (
-                <View key={item.id}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      paddingVertical: 12,
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 12,
-                      }}
-                    >
-                      <View
-                        style={{
-                          borderRadius: 8,
-                          padding: 8,
-                          shadowColor: "#000",
-                          shadowOffset: { width: 0, height: 1 },
-                          shadowOpacity: 0.1,
-                          shadowRadius: 10,
-                        }}
-                      >
-                        {item.icon}
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          gap: 4,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontFamily: "DMSans-SemiBold",
-                            fontSize: 12,
-                            color: "#111827",
-                          }}
-                        >
-                          {item.label}
-                        </Text>
-                        <Text
-                          style={{
-                            fontFamily: "DMSans-Regular",
-                            fontSize: 14,
-                            color: "#111827",
-                          }}
-                        >
-                          {isLastItem
-                            ? isConnected
-                              ? item.value
-                              : "Not Connected"
-                            : item.value}
-                        </Text>
-                      </View>
-                    </View>
-                    {isLastItem ? (
-                      isConnected ? (
-                        item.value
-                      ) : (
-                        <Button
-                          onPress={() => router.push("/scanner")}
-                          variant="primary"
-                          size="small"
-                          textStyle={{
-                            fontSize: 12,
-                          }}
-                        >
-                          Connect
-                        </Button>
-                      )
-                    ) : null}
-                  </View>
-                  {!isLastItem && (
-                    <View
-                      style={{
-                        height: 1,
-                        marginVertical: 4,
-                        backgroundColor: "#DBDBDB",
-                      }}
-                    />
-                  )}
-                </View>
-              );
-            })}
+            {profile.map((item, i, arr) => (
+              <ProfileItem
+                key={item.id}
+                {...item}
+                isLast={i === arr.length - 1}
+                isConnected={isConnected}
+                onConnect={() => router.push("/scanner")}
+              />
+            ))}
           </ContainerSection>
 
-          {/* Section: App Settings */}
           <ContainerSection title="App Settings" style={{ marginTop: 24 }}>
-            {profileNavigation.map(
-              (item: ProfileNavigation, index: number, array) => {
-                const isLastItem = index === array.length - 1;
-                return (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (isLastItem) handleLogout();
-                    }}
-                    key={item.id}
-                    activeOpacity={0.4}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        paddingVertical: 12,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 12,
-                        }}
-                      >
-                        <View
-                          style={{
-                            backgroundColor: isLastItem
-                              ? "rgba(229, 26, 26, 0.1)"
-                              : "#fff",
-                            borderRadius: 8,
-                            padding: 8,
-                            shadowColor: "#000",
-                            shadowOffset: { width: 0, height: 1 },
-                            shadowOpacity: 0.1,
-                            shadowRadius: 10,
-                          }}
-                        >
-                          {item.icon}
-                        </View>
-                        <Text
-                          style={{
-                            fontFamily: "DMSans-Regular",
-                            fontSize: 14,
-                            color: isLastItem ? Colors.DESTRUCTIVE : "#111827",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                      </View>
-                      {item.type === Type.Toggle ? (
-                        <CustomSwitch
-                          value={isEnabled}
-                          onValueChange={handleToggleNotification}
-                        />
-                      ) : item.type === Type.Arrow ? (
-                        <AntDesign
-                          name="arrowright"
-                          size={24}
-                          color="#B5B3B3"
-                        />
-                      ) : null}
-                    </View>
-                    {!isLastItem && (
-                      <View
-                        style={{
-                          height: 1,
-                          marginVertical: 4,
-                          backgroundColor: "#DBDBDB",
-                        }}
-                      />
-                    )}
-                  </TouchableOpacity>
-                );
-              }
-            )}
+            {profileNavigation.map((item, i, arr) => (
+              <SettingItem
+                key={item.id}
+                item={item}
+                isLast={i === arr.length - 1}
+                isEnabled={isEnabled}
+                onToggle={handleToggleNotification}
+                onLogout={handleLogout}
+              />
+            ))}
           </ContainerSection>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  separator: {
+    height: 1,
+    marginVertical: 4,
+    backgroundColor: Colors.BORDER,
+  },
+  text: {
+    fontFamily: "DMSans-Regular",
+    fontSize: 14,
+    color: "#111827",
+  },
+  containerItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+  },
+  containerIcon: {
+    borderRadius: 8,
+    padding: 8,
+    shadowColor: Colors.SHADOW,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
+});
 
 export default ProfilePage;

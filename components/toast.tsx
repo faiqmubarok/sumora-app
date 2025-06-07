@@ -46,7 +46,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
             style={{
               alignItems: "center",
               position: "absolute",
-              top: 32,
+              top: 20,
               width: Dimensions.get("window").width,
               paddingHorizontal: 16,
             }}
@@ -64,12 +64,23 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
               }}
             >
               <Text
-                style={{ fontWeight: "bold", color: "white", fontSize: 16 }}
+                style={{
+                  fontFamily: "DMSans-Medium",
+                  color: "white",
+                  fontSize: 14,
+                }}
               >
                 {toast.title}
               </Text>
               {!!toast.description && (
-                <Text style={{ color: "white", marginTop: 4 }}>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 12,
+                    fontFamily: "DMSans-Regular",
+                    marginTop: 4,
+                  }}
+                >
                   {toast.description}
                 </Text>
               )}
