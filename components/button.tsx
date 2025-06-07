@@ -50,7 +50,7 @@ const variantStyles = {
   outline: {
     container: {
       backgroundColor: "transparent",
-      borderWidth: 1.5,
+      borderWidth: 1,
       borderColor: "#D4D4D4",
     },
     text: {

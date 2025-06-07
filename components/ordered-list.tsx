@@ -1,3 +1,4 @@
+import Colors from "@/constants/color";
 import React from "react";
 import {
   FlatList,
@@ -45,12 +46,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginRight: 8,
     marginTop: 2,
-    color: "#4d4d4d",
+    color: Colors.TEXT,
   },
   text: {
     fontSize: 14,
     fontFamily: "DMSans-Regular",
-    color: "#4D4D4D",
+    color: Colors.TEXT,
     lineHeight: 24,
     flex: 1,
   },
