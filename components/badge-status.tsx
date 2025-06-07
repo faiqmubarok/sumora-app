@@ -1,3 +1,4 @@
+import Colors from "@/constants/color";
 import React from "react";
 import { Text, View, ViewStyle } from "react-native";
 
@@ -17,10 +18,10 @@ const BadgeStatus = ({
           paddingVertical: 4,
           backgroundColor:
             variant === "success"
-              ? "#3ACE10"
+              ? Colors.SUCCESS
               : variant === "warning"
-              ? "#FFFB00"
-              : "#E51A1A",
+              ? Colors.WARNING
+              : Colors.DESTRUCTIVE,
         },
         style,
       ]}
