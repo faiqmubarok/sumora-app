@@ -1,18 +1,25 @@
 import { axiosInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { LoginFormSchema } from "../form/form";
 
+type LoginResponse = {
+  token: string;
+  message: string;
+};
+
 type UsePostLoginProps = {
-  onSuccess?: () => void;
-  onError?: (e: Error) => void;
+  onSuccess?: (data: LoginResponse) => void;
+  onError?: (e: AxiosError) => void;
 };
 
 export const usePostLogin = ({ onError, onSuccess }: UsePostLoginProps) => {
   return useMutation({
-    mutationFn: async (data: LoginFormSchema) => {
-      const { data: response } = await axiosInstance.post("/auth/login", {
-        data,
-      });
+    mutationFn: async (data: LoginFormSchema): Promise<LoginResponse> => {
+      const { data: response } = await axiosInstance.post(
+        "/users/auth/login",
+        data
+      );
       return response;
     },
     onSuccess,
