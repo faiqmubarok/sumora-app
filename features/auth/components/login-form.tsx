@@ -1,7 +1,7 @@
 import Button from "@/components/button";
 import Checkbox from "@/components/checkbox";
 import Input from "@/components/input";
-// eslint-disable-next-line import/no-unresolved
+
 import Link from "@/components/link";
 import Colors from "@/constants/color";
 import React, { useState } from "react";
@@ -11,9 +11,10 @@ import { LoginFormSchema } from "../form/form";
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormSchema) => void;
+  loading?: boolean;
 }
 
-export default function LoginForm({ onSubmit }: LoginFormProps) {
+export default function LoginForm({ onSubmit, loading }: LoginFormProps) {
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const {
@@ -73,7 +74,13 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
         </View>
       </View>
 
-      <Button onPress={handleSubmit(onSubmit)}>Sign in</Button>
+      <Button
+        onPress={handleSubmit(onSubmit)}
+        isLoading={loading}
+        disabled={loading}
+      >
+        Sign in
+      </Button>
 
       {/* Separator */}
       <View style={styles.separator}>

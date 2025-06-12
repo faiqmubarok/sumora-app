@@ -1,7 +1,6 @@
 import Button from "@/components/button";
 import Checkbox from "@/components/checkbox";
 import Input from "@/components/input";
-// eslint-disable-next-line import/no-unresolved
 import Link from "@/components/link";
 import Colors from "@/constants/color";
 import React, { useState } from "react";
@@ -11,9 +10,10 @@ import { RegisterFormSchema } from "../form/form";
 
 interface RegisterFormProps {
   onSubmit: (data: RegisterFormSchema) => void;
+  loading?: boolean;
 }
 
-export default function RegisterForm({ onSubmit }: RegisterFormProps) {
+export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const {
@@ -90,7 +90,13 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
         </View>
       </View>
 
-      <Button onPress={handleSubmit(onSubmit)}>Sign up</Button>
+      <Button
+        onPress={handleSubmit(onSubmit)}
+        isLoading={loading}
+        disabled={loading}
+      >
+        Sign up
+      </Button>
 
       {/* Separator */}
       <View style={styles.separator}>

@@ -1,9 +1,12 @@
+import Link from "@/components/link";
 import { useToast } from "@/components/toast";
 import Colors from "@/constants/color";
 import { usePostLogin } from "@/features/auth/api/use-post-login";
 import LoginForm from "@/features/auth/components/login-form";
 import { LoginFormSchema, loginFormSchema } from "@/features/auth/form/form";
+import { saveAccessToken } from "@/lib/secure-store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios";
 import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import {
@@ -14,7 +17,6 @@ import {
   Text,
   View,
 } from "react-native";
-import Link from "../link";
 
 export default function LoginPage() {
   const { show } = useToast();
@@ -24,24 +26,37 @@ export default function LoginPage() {
   });
 
   const { mutate: login, isPending } = usePostLogin({
-    onSuccess: () => {
-      console.log("Login successful");
+    onSuccess: async ({ token, message }) => {
+      await saveAccessToken(token);
       form.reset();
+      show({
+        title: "Success!",
+        description: message || "Login successful",
+        variant: "success",
+      });
+      router.push("/home");
     },
-    onError: (e) => {
-      console.log(e);
+    onError: (e: unknown) => {
+      if (isAxiosError(e)) {
+        show({
+          title: "Error",
+          description: e.response?.data?.error || "Something went wrong",
+          variant: "error",
+        });
+      } else {
+        console.error(e);
+        show({
+          title: "Error",
+          description: "An unknown error occurred",
+          variant: "error",
+        });
+      }
     },
   });
 
   const onSubmit = (data: LoginFormSchema) => {
     console.log("Form submitted:", data);
-    show({
-      title: "Success!",
-      description: "Login successful",
-      variant: "success",
-    });
-    router.push("/home");
-    // login(data);
+    login(data);
   };
 
   return (
@@ -70,7 +85,7 @@ export default function LoginPage() {
 
           <View style={styles.formContainer}>
             <FormProvider {...form}>
-              <LoginForm onSubmit={onSubmit} />
+              <LoginForm onSubmit={onSubmit} loading={isPending} />
             </FormProvider>
             {/* Footer */}
             <View style={styles.footer}>
