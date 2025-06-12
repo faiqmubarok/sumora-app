@@ -1,8 +1,6 @@
-import insight1 from "@/assets/images/insight-1.png";
-import insight2 from "@/assets/images/insight-2.png";
-import insight3 from "@/assets/images/insight-3.png";
 import Button from "@/components/button";
 import Colors from "@/constants/color";
+import { insight } from "@/data/water-insight";
 import { getDecodedAccessToken } from "@/lib/secure-store";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -56,27 +54,6 @@ type Overview = {
   };
   label?: { ppm: number; ph: number };
 };
-
-const insight = [
-  {
-    id: 1,
-    image: insight1,
-    name: "Why Daily Water Monitoring Matters More Than You Think",
-    date: "14 July 2025",
-  },
-  {
-    id: 2,
-    image: insight2,
-    name: "Understanding Water Quality: What’s Really in Your Tap?",
-    date: "18 May 2025",
-  },
-  {
-    id: 3,
-    image: insight3,
-    name: "Saving Every Drop: Smart Habits for Sustainable Water Use",
-    date: "9 Oktober 2025",
-  },
-];
 
 const CardNews = ({
   time,

@@ -1,3 +1,4 @@
+import { insight } from "@/data/water-insight";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -18,13 +19,7 @@ import OrderedList from "../ordered-list";
 const STATUS_BAR_HEIGHT =
   Platform.OS === "ios" ? 44 : RNStatusBar.currentHeight || 24;
 
-const tags = [
-  { id: 1, name: "Water Quality" },
-  { id: 2, name: "Monitoring Tips" },
-  { id: 3, name: "Smart Living" },
-];
-
-const DetailArticlePage = () => {
+const DetailArticlePage = ({ id }: { id: number }) => {
   const navigation = useNavigation();
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -56,6 +51,12 @@ const DetailArticlePage = () => {
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     { useNativeDriver: true }
   );
+
+  const article = insight.find((item) => item.id === id);
+
+  if (!article) {
+    return <Text>Article not found</Text>;
+  }
 
   return (
     <>
@@ -99,28 +100,24 @@ const DetailArticlePage = () => {
           onScroll={onScroll}
           contentContainerStyle={styles.scrollContent}
         >
-          <Image
-            source={require("@/assets/images/article-image.png")}
-            style={styles.articleImage}
-          />
+          <Image source={article.image} style={styles.articleImage} />
           <View style={styles.content}>
             <View style={styles.tagsContainer}>
               <View style={styles.tagsRow}>
-                {tags.map((tag, index) => (
+                {article?.tags?.map((tag, index) => (
                   <View
-                    key={tag.id}
+                    key={index}
                     style={[
                       styles.tag,
-                      index !== tags.length - 1 && styles.tagMarginRight,
+                      index !== article?.tags?.length - 1 &&
+                        styles.tagMarginRight,
                     ]}
                   >
-                    <Text style={styles.tagText}>{tag.name}</Text>
+                    <Text style={styles.tagText}>{tag}</Text>
                   </View>
                 ))}
               </View>
-              <Text style={styles.title}>
-                Why Daily Water Monitoring Matters More Than You Think
-              </Text>
+              <Text style={styles.title}>{article.name}</Text>
 
               <View style={styles.logoDateRow}>
                 <View style={styles.logoRow}>
@@ -130,17 +127,11 @@ const DetailArticlePage = () => {
                   />
                   <Text style={styles.logoText}>Sumora</Text>
                 </View>
-                <Text style={styles.dateText}>14 July 2025</Text>
+                <Text style={styles.dateText}>{article.date}</Text>
               </View>
             </View>
 
-            <Text style={styles.paragraph}>
-              We often take clean water for granted—until something goes wrong.
-              From sudden changes in temperature to unexpected contamination,
-              water quality can shift faster than we realize. That’s why
-              consistent, daily monitoring isn’t just recommended—it’s
-              essential.
-            </Text>
+            <Text style={styles.paragraph}>{article.description}</Text>
 
             <View>
               <Text style={styles.subheading}>
