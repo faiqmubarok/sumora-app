@@ -5,6 +5,7 @@ import {
   profileNavigation,
   Type,
 } from "@/data/profile.navigation";
+import { deleteAccessToken } from "@/lib/secure-store";
 import { useDeviceStore } from "@/store/device-store";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -251,7 +252,8 @@ const ProfilePage = () => {
       description: "Are you sure you want to logout?",
       cancelText: "Cancel",
       confirmText: "Confirm",
-      onConfirm: () => {
+      onConfirm: async () => {
+        await deleteAccessToken();
         toastShow({
           title: "Logout successful",
           description: "You have been logged out",
