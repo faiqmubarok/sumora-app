@@ -12,6 +12,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import {
   Image,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -60,47 +62,55 @@ export default function LoginPage() {
   };
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <ImageBackground
-        source={require("@/assets/images/background.png")}
-        style={styles.background}
-        imageStyle={styles.imageStyle}
-      >
-        <View style={styles.wrapper}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Image
-              width={36}
-              height={36}
-              style={styles.logo}
-              alt="logo"
-              source={require("@/assets/images/logo.png")}
-            />
-            <Text style={styles.title}>Sign in to Sumora</Text>
-            <Text style={styles.subtitle}>
-              Monitor your water with confidence. Log in to track, analyze, and
-              ensure its safety.
-            </Text>
-          </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: Colors.WHITE }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -60}
+    >
+      <ScrollView style={styles.scrollContainer}>
+        <ImageBackground
+          source={require("@/assets/images/background.png")}
+          style={styles.background}
+          imageStyle={styles.imageStyle}
+        >
+          <View style={styles.wrapper}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Image
+                width={36}
+                height={36}
+                style={styles.logo}
+                alt="logo"
+                source={require("@/assets/images/logo.png")}
+              />
+              <Text style={styles.title}>Sign in to Sumora</Text>
+              <Text style={styles.subtitle}>
+                Monitor your water with confidence. Log in to track, analyze,
+                and ensure its safety.
+              </Text>
+            </View>
 
-          <View style={styles.formContainer}>
-            <FormProvider {...form}>
-              <LoginForm onSubmit={onSubmit} loading={isPending} />
-            </FormProvider>
-            {/* Footer */}
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Don&apos;t have an account?</Text>
-              <Link
-                href={"/register"}
-                style={{ textDecorationLine: "underline" }}
-              >
-                Sign up
-              </Link>
+            <View style={styles.formContainer}>
+              <FormProvider {...form}>
+                <LoginForm onSubmit={onSubmit} loading={isPending} />
+              </FormProvider>
+              {/* Footer */}
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>
+                  Don&apos;t have an account?
+                </Text>
+                <Link
+                  href={"/register"}
+                  style={{ textDecorationLine: "underline" }}
+                >
+                  Sign up
+                </Link>
+              </View>
             </View>
           </View>
-        </View>
-      </ImageBackground>
-    </ScrollView>
+        </ImageBackground>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

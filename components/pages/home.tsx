@@ -3,13 +3,14 @@ import insight2 from "@/assets/images/insight-2.png";
 import insight3 from "@/assets/images/insight-3.png";
 import Button from "@/components/button";
 import Colors from "@/constants/color";
+import { getDecodedAccessToken } from "@/lib/secure-store";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BlurView } from "expo-blur";
 import { router, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -20,6 +21,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Avatar from "../avatar";
 import BadgeStatus from "../badge-status";
 
 enum Label {
@@ -229,6 +231,37 @@ const CardOverview = ({
 };
 
 export default function HomePage() {
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    photo?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = await getDecodedAccessToken();
+      if (token) {
+        const defaultName = token.name ?? "Guest";
+        setUser({
+          name: defaultName,
+          email: token.email ?? "",
+          photo: token.photo ?? "",
+        });
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+
+    if (hour < 12) return "Good morning!";
+    if (hour < 17) return "Good afternoon!";
+    if (hour < 21) return "Good evening!";
+    return "Good night!";
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar style="light" translucent />
@@ -247,17 +280,16 @@ export default function HomePage() {
               paddingHorizontal: 16,
             }}
           >
-            <TouchableOpacity activeOpacity={0.6} onPress={() => router.push("/profile")}
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => router.push("/profile")}
               style={{ flexDirection: "row", gap: 12, alignItems: "center" }}
             >
-              <Image
-                source={require("@/assets/images/avatar.png")}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  overflow: "hidden",
-                }}
+              <Avatar
+                size={44}
+                borderRadius={22}
+                fallbackText={user?.email.slice(0, 1)}
+                uri={user?.photo}
               />
               <View>
                 <Text
@@ -267,12 +299,12 @@ export default function HomePage() {
                     fontSize: 16,
                   }}
                 >
-                  Welcome back!!
+                  {getGreeting()}
                 </Text>
                 <Text
                   style={{ color: Colors.WHITE, fontFamily: "DMSans-Regular" }}
                 >
-                  Kim Chaewon
+                  {user?.name}
                 </Text>
               </View>
             </TouchableOpacity>

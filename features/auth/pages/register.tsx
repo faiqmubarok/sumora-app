@@ -11,6 +11,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import {
   Image,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -53,44 +55,53 @@ export default function RegisterPage() {
   };
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <ImageBackground
-        source={require("@/assets/images/background.png")}
-        style={styles.background}
-        imageStyle={styles.imageStyle}
-      >
-        <View style={styles.wrapper}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Image
-              width={36}
-              height={36}
-              style={styles.logo}
-              alt="logo"
-              source={require("@/assets/images/logo.png")}
-            />
-            <Text style={styles.title}>Sign up to Sumora</Text>
-            <Text style={styles.subtitle}>
-              Start protecting your water today. Create an account to monitor,
-              analyze, and keep it safe—right from the start.
-            </Text>
-          </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: Colors.WHITE }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -170}
+    >
+      <ScrollView style={styles.scrollContainer}>
+        <ImageBackground
+          source={require("@/assets/images/background.png")}
+          style={styles.background}
+          imageStyle={styles.imageStyle}
+        >
+          <View style={styles.wrapper}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Image
+                width={36}
+                height={36}
+                style={styles.logo}
+                alt="logo"
+                source={require("@/assets/images/logo.png")}
+              />
+              <Text style={styles.title}>Sign up to Sumora</Text>
+              <Text style={styles.subtitle}>
+                Start protecting your water today. Create an account to monitor,
+                analyze, and keep it safe—right from the start.
+              </Text>
+            </View>
 
-          <View style={styles.formContainer}>
-            <FormProvider {...form}>
-              <RegisterForm onSubmit={onSubmit} loading={isPending} />
-            </FormProvider>
-            {/* Footer */}
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>Already have an account?</Text>
-              <Link href={"/login"} style={{ textDecorationLine: "underline" }}>
-                Sign in
-              </Link>
+            <View style={styles.formContainer}>
+              <FormProvider {...form}>
+                <RegisterForm onSubmit={onSubmit} loading={isPending} />
+              </FormProvider>
+              {/* Footer */}
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Already have an account?</Text>
+                <Link
+                  href={"/login"}
+                  style={{ textDecorationLine: "underline" }}
+                >
+                  Sign in
+                </Link>
+              </View>
             </View>
           </View>
-        </View>
-      </ImageBackground>
-    </ScrollView>
+        </ImageBackground>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
