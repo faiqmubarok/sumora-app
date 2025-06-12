@@ -1,11 +1,12 @@
+import { useToast } from "@/components/toast";
 import Colors from "@/constants/color";
-import { usePostRegister } from "@/features/auth/api/use-post-register";
 import RegisterForm from "@/features/auth/components/register-form";
 import {
   RegisterFormSchema,
   registerFormSchema,
 } from "@/features/auth/form/form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Image,
@@ -15,9 +16,12 @@ import {
   Text,
   View,
 } from "react-native";
-import Link from "../link";
+import Link from "../../../components/link";
+import { usePostRegister } from "../api/use-post-register";
 
 export default function RegisterPage() {
+  const { show } = useToast();
+  const router = useRouter();
   const form = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
   });
@@ -25,10 +29,21 @@ export default function RegisterPage() {
   const { mutate: register, isPending } = usePostRegister({
     onSuccess: () => {
       console.log("Register successful");
+      show({
+        title: "Success!",
+        description: "Register successful",
+        variant: "success",
+      });
+      router.push("/login");
       form.reset();
     },
     onError: (e) => {
       console.log(e);
+      show({
+        title: "Register failed",
+        description: e.message || "Something went wrong",
+        variant: "error",
+      });
     },
   });
 
@@ -63,7 +78,7 @@ export default function RegisterPage() {
 
           <View style={styles.formContainer}>
             <FormProvider {...form}>
-              <RegisterForm onSubmit={onSubmit} />
+              <RegisterForm onSubmit={onSubmit} loading={isPending} />
             </FormProvider>
             {/* Footer */}
             <View style={styles.footer}>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: `${process.env.BACKEND_URL}/api`,
+  baseURL: `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/v1`,
   withCredentials: true,
 });
