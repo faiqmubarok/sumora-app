@@ -56,10 +56,7 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormSchema) => {
-    console.log("Form submitted:", data);
-    login(data);
-  };
+  const onSubmit = (data: LoginFormSchema) => login(data);
 
   return (
     <KeyboardAvoidingView
