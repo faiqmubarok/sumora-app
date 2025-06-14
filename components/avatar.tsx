@@ -95,7 +95,9 @@ const styles = StyleSheet.create({
   },
   fallbackText: {
     color: "#fff",
-    fontWeight: "bold",
+    textAlign: "center",
+    textTransform: "uppercase",
+    fontFamily: "DMSans-Bold",
     fontSize: 18,
   },
 });

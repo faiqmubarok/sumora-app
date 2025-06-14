@@ -4,7 +4,10 @@ export type Profile = {
   name: string | null;
   photo: string | null;
   phone: string | null;
-  deviceId: string | null;
+  devices: {
+    id: string;
+    name: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 };

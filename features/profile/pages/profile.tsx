@@ -25,7 +25,6 @@ const profile: {
   label: string;
   icon: React.ReactNode;
   key?: UserFieldKey;
-  value?: string;
 }[] = [
   {
     id: 1,
@@ -53,12 +52,6 @@ const profile: {
         style={{ transform: [{ scaleX: -1 }] }}
       />
     ),
-  },
-  {
-    id: 4,
-    label: "Device ID",
-    value: "SMR-323478", // Hardcoded, gak ngikut user
-    icon: <MaterialIcons name="device-hub" size={24} color="black" />,
   },
 ];
 
@@ -195,10 +188,8 @@ const ProfilePage = () => {
           </View>
 
           <ContainerSection title="User Profile" style={{ marginTop: 24 }}>
-            {profile.map((item, i, arr) => {
-              const value = item.key
-                ? user?.[item.key as UserFieldKey] ?? "-"
-                : item.value ?? "-";
+            {profile.map((item, i) => {
+              const value = item.key ? user?.[item.key] ?? "-" : "-";
 
               return (
                 <ProfileItem
@@ -206,12 +197,22 @@ const ProfilePage = () => {
                   label={item.label}
                   value={value}
                   icon={item.icon}
-                  isLast={i === arr.length - 1}
-                  isConnected={isConnected}
-                  onConnect={() => router.push("/scanner")}
+                  isLast={false}
+                  isConnected={false}
+                  onConnect={() => {}}
                 />
               );
             })}
+
+            {/* Device ID */}
+            <ProfileItem
+              label="Device ID"
+              value={user?.devices?.[0]?.name ?? "-"}
+              icon={<MaterialIcons name="device-hub" size={24} color="black" />}
+              isLast={true}
+              isConnected={isConnected}
+              onConnect={() => router.push("/scanner")}
+            />
           </ContainerSection>
 
           <ContainerSection title="App Settings" style={{ marginTop: 24 }}>
