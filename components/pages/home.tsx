@@ -1,6 +1,7 @@
 import Button from "@/components/button";
 import Colors from "@/constants/color";
 import { insight } from "@/data/water-insight";
+import { useFetchProfile } from "@/features/profile/api/use-fetch-profile";
 import { getDecodedAccessToken } from "@/lib/secure-store";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,6 +22,7 @@ import {
 } from "react-native";
 import Avatar from "../avatar";
 import BadgeStatus from "../badge-status";
+import { useToast } from "../toast";
 
 enum Label {
   Fresh = "fresh",
@@ -208,7 +210,9 @@ const CardOverview = ({
 };
 
 export default function HomePage() {
+  const { show } = useToast();
   const [user, setUser] = useState<{
+    id: string;
     name: string;
     email: string;
     photo?: string;
@@ -220,15 +224,28 @@ export default function HomePage() {
       if (token) {
         const defaultName = token.name ?? "Guest";
         setUser({
+          id: token.id ?? "",
           name: defaultName,
           email: token.email ?? "",
-          photo: token.photo ?? "",
+          photo: token.photo?.url ?? "",
         });
       }
     };
 
     fetchUser();
   }, []);
+
+  const { data: userData } = useFetchProfile({
+    id: user?.id ?? "",
+    onError(e) {
+      console.log(e);
+      show({
+        title: "Error",
+        description: "Error fetching user",
+        variant: "error",
+      });
+    },
+  });
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -265,8 +282,9 @@ export default function HomePage() {
               <Avatar
                 size={44}
                 borderRadius={22}
-                fallbackText={user?.email.slice(0, 1)}
-                uri={user?.photo}
+                // fallbackText={user?.email.slice(0, 1)}
+                fallbackText={userData?.email.slice(0, 1)}
+                uri={userData?.photo?.url}
               />
               <View>
                 <Text
@@ -281,7 +299,7 @@ export default function HomePage() {
                 <Text
                   style={{ color: Colors.WHITE, fontFamily: "DMSans-Regular" }}
                 >
-                  {user?.name}
+                  {userData?.name}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -426,33 +444,6 @@ export default function HomePage() {
               gap: 28,
             }}
           >
-            {/* Water Overview */}
-            {/* <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontFamily: "DMSans-SemiBold", fontSize: 20 }}>
-              Water Overview
-            </Text>
-            <Pressable>
-              <Text style={{ fontFamily: "DMSans-Regular", color: "#0A40E2" }}>
-                View Report
-              </Text>
-            </Pressable>
-          </View>
-          {overview.map((item, index) => (
-            <CardOverview
-              key={index}
-              name={item.name}
-              image={item.image}
-              coordinates={item.coordinates}
-              label={item.label}
-            />
-          ))} */}
-
             {/* Water Insight */}
             <View
               style={{

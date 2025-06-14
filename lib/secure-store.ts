@@ -7,7 +7,10 @@ export type DecodedToken = {
   id: string;
   name?: string;
   email: string;
-  photo?: string;
+  photo?: {
+    url: string;
+    publicId: string;
+  } | null;
   iat: number;
   exp: number;
 };

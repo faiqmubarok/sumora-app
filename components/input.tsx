@@ -16,6 +16,7 @@ import Label from "./label";
 interface InputProps extends TextInputProps {
   label?: string;
   icon?: keyof typeof Ionicons.glyphMap;
+  costumeIcon?: React.ReactNode;
   containerStyle?: ViewStyle;
   inputStyle?: TextStyle;
   iconColor?: string;
@@ -31,6 +32,7 @@ const Input = forwardRef<TextInput, InputProps>(
     {
       label,
       icon,
+      costumeIcon,
       containerStyle,
       inputStyle,
       iconColor = "#999",
@@ -63,6 +65,19 @@ const Input = forwardRef<TextInput, InputProps>(
               color={iconColor}
               style={styles.iconLeft}
             />
+          )}
+          {costumeIcon && (
+            <View
+              style={[
+                styles.iconLeft,
+                {
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+            >
+              {costumeIcon}
+            </View>
           )}
 
           <TextInput

@@ -144,7 +144,7 @@ const ProfilePage = () => {
         <View style={{ width: "100%", maxWidth: 480, marginBottom: 64 }}>
           <View style={{ alignItems: "center" }}>
             <Avatar
-              uri={user?.photo ?? undefined}
+              uri={user?.photo?.url ?? undefined}
               size={72}
               fallbackText={user?.email.slice(0, 1)}
             />
@@ -174,6 +174,9 @@ const ProfilePage = () => {
                 <Text style={styles.text}>{user?.email}</Text>
               )}
               <Button
+                onPress={() => {
+                  router.push("/profile/edit-profile");
+                }}
                 variant="outline"
                 style={{
                   marginTop: 20,
