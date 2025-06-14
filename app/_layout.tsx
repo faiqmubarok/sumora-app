@@ -1,4 +1,5 @@
 import Colors from "@/constants/color";
+import { useInitializeDeviceState } from "@/hooks/use-initialize-device";
 import { TanstackProvider } from "@/providers/tanstack-provider";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -30,6 +31,8 @@ export default function RootLayout() {
       return () => clearTimeout(timeout);
     }
   }, [fontsLoaded]);
+
+  useInitializeDeviceState();
 
   if (!appReady) {
     return (

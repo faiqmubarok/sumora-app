@@ -6,6 +6,16 @@ import { LoginFormSchema } from "../form/form";
 type LoginResponse = {
   token: string;
   message: string;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    photo: string | null;
+    devices: {
+      id: string;
+      name: string;
+    }[];
+  };
 };
 
 type UsePostLoginProps = {

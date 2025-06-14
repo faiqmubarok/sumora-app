@@ -4,7 +4,9 @@ import Colors from "@/constants/color";
 import { usePostLogin } from "@/features/auth/api/use-post-login";
 import LoginForm from "@/features/auth/components/login-form";
 import { LoginFormSchema, loginFormSchema } from "@/features/auth/form/form";
+import { deleteDeviceId, saveDeviceId } from "@/lib/secure-device";
 import { saveAccessToken } from "@/lib/secure-store";
+import { useDeviceStore } from "@/store/device-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import { useRouter } from "expo-router";
@@ -22,14 +24,30 @@ import {
 
 export default function LoginPage() {
   const { show } = useToast();
+  const { reset, setDeviceId, setConnected } = useDeviceStore();
   const router = useRouter();
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
   });
 
   const { mutate: login, isPending } = usePostLogin({
-    onSuccess: async ({ token, message }) => {
+    onSuccess: async ({ token, message, user }) => {
       await saveAccessToken(token);
+
+      reset();
+      await deleteDeviceId();
+
+      const firstDevice = user.devices?.[0];
+      if (firstDevice) {
+        const deviceId =
+          typeof firstDevice === "string" ? firstDevice : firstDevice.id;
+
+        // Simpan ke state dan secure store
+        setDeviceId(deviceId);
+        await saveDeviceId(deviceId);
+        setConnected(true);
+      }
+
       form.reset();
       show({
         title: "Success!",

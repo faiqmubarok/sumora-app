@@ -3,7 +3,9 @@ import { CustomSwitch } from "@/components/switch";
 import { useToast } from "@/components/toast";
 import Colors from "@/constants/color";
 import { ProfileNavigation, Type } from "@/data/profile.navigation";
+import { deleteDeviceId } from "@/lib/secure-device";
 import { deleteAccessToken } from "@/lib/secure-store";
+import { useDeviceStore } from "@/store/device-store";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
@@ -19,6 +21,7 @@ const Setting = ({
   isLast: boolean;
 }) => {
   const router = useRouter();
+  const { reset } = useDeviceStore();
   const { show } = useDialog();
   const { show: toastShow } = useToast();
 
@@ -42,6 +45,9 @@ const Setting = ({
       confirmText: "Confirm",
       onConfirm: async () => {
         await deleteAccessToken();
+        await deleteDeviceId();
+        reset();
+
         toastShow({
           title: "Logout successful",
           description: "You have been logged out",
